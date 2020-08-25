@@ -1,64 +1,86 @@
-# Snake
+#深度相机
 
-[![][badge-travis]][build-travis] [![][badge-appveyor]][build-appveyor] ![][badge-python]
+==============================================
 
-This project focuses on the artificial intelligence of the [Snake][wiki-snake] game. The snake's goal is to eat the food continuously and fill the map with its bodies ASAP. The [old version][snake-proj-old] of this project is written in C++. Now it has been rewritten using Python for a user-friendly GUI and the simplicity in the implementations of algorithms.
+##环境依赖
 
-***[Algorithms >][doc-algorithms]***
+###硬件
 
-## Experiments
+- IntelRealSense-D435i相机
 
-We use two metrics to evaluate the performance of an AI:
+###软件
 
-1. **Average Length:** Average length the snake has grown to (*max:* 64).
-2. **Average Steps:** Average steps the snake has moved.
+- ROS Melodic
 
-Test results (averaged over 1000 episodes):
+- RealSense
 
-| Solver | Demo (optimal) | Average Length | Average Steps |
-| :----: | :------------: | :------------: | :-----------: |
-|[Hamilton][doc-hamilton]|![][demo-hamilton]|63.93|717.83|
-|[Greedy][doc-greedy]|![][demo-greedy]|60.15|904.56|
-|[DQN][doc-dqn]<br>(experimental)|![][demo-dqn]|24.44|131.69|
+- C++
 
-## Installation
+- Python
 
-Requirements: Python 3.5+ (64-bit) with [Tkinter][doc-tkinter] installed.
+#####我们在Ubuntu18.04系统上完成了对深度相机的调试运行，把深度图和rgb图匹配起来，进而可以从一张图像上面读取更多的信息。
 
-```
-$ pip3 install -r requirements.txt
+##部署步骤
 
-# Use -h for more details
-$ python3 run.py [-h]
-```
-
-Run unit tests:
+###1. 安装ROS Melodic
 
 ```
-$ python3 -m pytest -v
+
+http://wiki.ros.org/melodic/Installation/Ubuntu
+
 ```
 
-## License
+###2. 配置RealSense环境
 
-See the [LICENSE](./LICENSE.md) file for license rights and limitations.
+```
 
+https://github.com/IntelRealSense/librealsense
 
-[snake-proj-old]: https://github.com/chuyangliu/Snake/tree/7227f5e0f3185b07e9e3de1ac5c19a17b9de3e3c
+```
 
-[build-travis]: https://travis-ci.org/chuyangliu/snake
-[build-appveyor]: https://ci.appveyor.com/project/chuyangliu/snake/branch/master
+###3. 创建工作空间
 
-[badge-travis]: https://travis-ci.org/chuyangliu/snake.svg?branch=master
-[badge-appveyor]: https://ci.appveyor.com/api/projects/status/ew63pr1vb7ee1yyi/branch/master?svg=true
-[badge-python]: https://img.shields.io/badge/python-3.5+-blue.svg
+```
 
-[wiki-snake]: https://en.wikipedia.org/wiki/Snake_(video_game)
-[doc-tkinter]: https://docs.python.org/3.6/library/tkinter.html
-[doc-algorithms]: ./docs/algorithms.md
-[doc-greedy]: ./docs/algorithms.md#greedy-solver
-[doc-hamilton]: ./docs/algorithms.md#hamilton-solver
-[doc-dqn]: ./docs/algorithms.md#dqn-solver
+mkdir -p ~/RoboRTS_wsc
 
-[demo-hamilton]: ./docs/images/solver_hamilton.gif
-[demo-greedy]: ./docs/images/solver_greedy.gif
-[demo-dqn]: ./docs/images/solver_dqn.gif
+cd ~/RoboRTS_wsc
+
+catkin_init_workspace
+
+cd ~/RoboRTS_ws/
+
+catkin_make
+
+source develtup.bash
+
+```
+
+###4. 将功能包放入工作空间的src文件夹并编译
+
+```
+
+cd ~/RoboRTS_wsc
+
+git clone https://github.com/IntelRealSense/realsense-ros
+
+git clone https://github.com/pal-robotics/ddynamic_reconfigure/tree/kinetic-devel
+
+cd ~/RoboRTS_ws
+
+catkin_make
+
+```
+
+##启动相机
+
+```
+roalaunch realsense_camera rs_camera.launch
+
+```
+
+##在ROS中运行
+```
+roslaunch roborts_bringup ws.launch
+```
+可以在ROS中看到深度相机检测到的
